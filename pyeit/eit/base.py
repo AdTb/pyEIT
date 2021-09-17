@@ -141,7 +141,7 @@ class EitBase:
         """ simple mat using projection matrix """
         raise NotImplementedError
 
-    def normalize(self, v1, v0):
+    def normalize(self, v1, v0, strategy="amplitude"):
         """
         Normalize current frame using the amplitude of the reference frame.
         Boundary measurements v are complex-valued, we can use the real part of v,
@@ -156,6 +156,12 @@ class EitBase:
         v0: NDArray
             referenced frame, which is a row vector
         """
-        dv = (v1 - v0) / (v0 * self.v0_sign)
-
+        if not np.iscomplex(v0).any():
+            dv = (v1 - v0) / (v0 * self.v0_sign)
+        elif strategy == "amplitude":
+            dv = (v1 - v0) / (np.abs(v0))
+        elif strategy == "realpart":
+            dv = (v1 - v0) / (np.real(v0) * self.v0_sign)
+        else:
+            raise ValueError("Strategy must be either 'amplitude' or 'realpart'") 
         return dv

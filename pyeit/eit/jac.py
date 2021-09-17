@@ -195,7 +195,7 @@ def h_matrix(jac, p, lamb, method="kotre"):
     H: NDArray
         pseudo-inverse matrix of JAC
     """
-    j_w_j = np.dot(jac.transpose(), jac)
+    j_w_j = np.dot(jac.conjugate().transpose(), jac)
     if method == "kotre":
         # see adler-dai-lionheart-2007
         # p=0   : noise distribute on the boundary ('dgn')
@@ -211,7 +211,7 @@ def h_matrix(jac, p, lamb, method="kotre"):
         r_mat = np.eye(jac.shape[1])
 
     # build H
-    h_mat = np.dot(la.inv(j_w_j + lamb * r_mat), jac.transpose())
+    h_mat = np.dot(la.inv(j_w_j + lamb * r_mat), jac.conjugate().transpose())
     return h_mat
 
 
